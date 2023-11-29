@@ -8,6 +8,7 @@ from fastai.vision.all import (
     DataLoader,
     DataLoaders,
     RocAuc,
+    EarlyStoppingCallback,
     SaveModelCallback,
     CSVLogger,
 )
@@ -38,7 +39,7 @@ def train(
     targets: Tuple[SKLearnEncoder, npt.NDArray],
     add_features: Iterable[Tuple[SKLearnEncoder, npt.NDArray]] = [],
     valid_idxs: npt.NDArray[np.int_],
-    n_epoch: int = 32,
+    n_epoch: int = 100,
     path: Optional[Path] = None,
 ) -> Learner:
     """Train a MLP on image features.
@@ -90,6 +91,7 @@ def train(
 
     cbs = [
         SaveModelCallback(fname=f"best_valid"),
+        EarlyStoppingCallback(min_delta=0.001, patience=25),
         CSVLogger(),
     ]
 
