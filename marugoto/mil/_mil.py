@@ -39,7 +39,7 @@ def train(
     targets: Tuple[SKLearnEncoder, npt.NDArray],
     add_features: Iterable[Tuple[SKLearnEncoder, npt.NDArray]] = [],
     valid_idxs: npt.NDArray[np.int_],
-    n_epoch: int = 200,
+    n_epoch: int = 1000,
     path: Optional[Path] = None,
 ) -> Learner:
     """Train a MLP on image features.
@@ -67,7 +67,7 @@ def train(
 
     # build dataloaders
     train_dl = DataLoader(
-        train_ds, batch_size=64, shuffle=True, num_workers=1, drop_last=True
+        train_ds, batch_size=32, shuffle=True, num_workers=1, drop_last=True
     )
     valid_dl = DataLoader(
         valid_ds, batch_size=1, shuffle=False, num_workers=os.cpu_count()
@@ -91,7 +91,7 @@ def train(
 
     cbs = [
         SaveModelCallback(fname=f"best_valid"),
-        EarlyStoppingCallback(min_delta=0.0005, patience=25),
+        EarlyStoppingCallback(min_delta=0.00001, patience=30),
         CSVLogger(),
     ]
 
