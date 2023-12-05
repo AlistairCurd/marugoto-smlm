@@ -67,7 +67,7 @@ def train(
 
     # build dataloaders
     train_dl = DataLoader(
-        train_ds, batch_size=32, shuffle=True, num_workers=1, drop_last=True
+        train_ds, batch_size=16, shuffle=True, num_workers=1, drop_last=True
     )
     valid_dl = DataLoader(
         valid_ds, batch_size=1, shuffle=False, num_workers=os.cpu_count()
@@ -94,6 +94,7 @@ def train(
         EarlyStoppingCallback(min_delta=0.00001, patience=30),
         CSVLogger(),
     ]
+
 
     learn.fit_one_cycle(n_epoch=n_epoch, lr_max=1e-4, cbs=cbs)
 
