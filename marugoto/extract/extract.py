@@ -79,15 +79,14 @@ def extract_features_(
             transforms.CenterCrop(224),
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.RandomVerticalFlip(p=0.5),
-            transforms.RandomApply([transforms.GaussianBlur(3)], p=0.5),
-            transforms.RandomApply(
-                [
-                    transforms.ColorJitter(
-                        brightness=0.1, contrast=0.2, saturation=0.25, hue=0.125
-                    )
-                ],
-                p=0.5,
-            ),
+            # transforms.RandomApply([transforms.GaussianBlur(3)], p=0.5),
+            # transforms.RandomApply(
+            #    [transforms.ColorJitter(
+            #        brightness=0.1, contrast=0.2, saturation=0.25, hue=0.125
+            #        )
+            #    ],
+            #    p=0.5,
+            # ),
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
         ]
@@ -106,7 +105,8 @@ def extract_features_(
 
     for slide_tile_path in tqdm(slide_tile_paths):
         slide_tile_path = Path(slide_tile_path)
-        # check if h5 for slide already exists / slide_tile_path path contains tiles
+        # check if h5 for slide already exists /
+        # slide_tile_path path contains tiles
         if (h5outpath := outdir / f"{slide_tile_path.name}.h5").exists():
             print(f"{h5outpath} already exists.  Skipping...")
             continue
@@ -116,7 +116,9 @@ def extract_features_(
 
         unaugmented_ds = SlideTileDataset(slide_tile_path, normal_transform)
         augmented_ds = SlideTileDataset(
-            slide_tile_path, augmenting_transform, repetitions=augmented_repetitions
+            slide_tile_path,
+            augmenting_transform,
+            repetitions=augmented_repetitions
         )
         ds = ConcatDataset([unaugmented_ds, augmented_ds])
         dl = torch.utils.data.DataLoader(
@@ -132,7 +134,10 @@ def extract_features_(
         feats = []
         for batch in tqdm(dl, leave=False):
             feats.append(
-                model(batch.type_as(next(model.parameters()))).half().cpu().detach()
+                model(batch.type_as(
+                        next(model.parameters())
+                        )
+                      ).half().cpu().detach()
             )
 
         with h5py.File(h5outpath, "w") as f:
