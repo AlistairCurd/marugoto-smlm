@@ -172,7 +172,7 @@ def get_cohort_df(
     slide_table: Path,
     feature_dir: Path,
     target_label: str,
-    categories: Optional[npt.NDArray[np.str_]],
+    categories: Optional[npt.NDArray[np.str_]] = None,
 ) -> Tuple[pd.DataFrame, npt.NDArray[np.str_]]:
     clini_df = (
         pd.read_csv(clini_table, dtype=str)
