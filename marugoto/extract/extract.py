@@ -22,7 +22,7 @@ class SlideTileDataset(Dataset):
     def __init__(
         self, slide_dir: Path, transform=None, *, repetitions: int = 1
     ) -> None:
-        self.tiles = list(slide_dir.glob("*.jpg"))
+        self.tiles = list(slide_dir.glob("*.TIF"))  # was *.jpg
         assert self.tiles, f"no tiles found in {slide_dir}"
         self.tiles *= repetitions
         self.transform = transform
@@ -39,7 +39,8 @@ class SlideTileDataset(Dataset):
 
 
 def _get_coords(filename) -> Optional[np.ndarray]:
-    if matches := re.match(r".*\((\d+),(\d+)\)\.jpg", str(filename)):
+    if matches := re.match(r".*\((\d+),(\d+)\)\.TIF", str(filename)):
+        # was .jpg
         coords = tuple(map(int, matches.groups()))
         assert len(coords) == 2, "Error extracting coordinates"
         return np.array(coords)
@@ -114,7 +115,7 @@ def extract_features_(
         if (h5outpath := outdir / f"{slide_tile_path.name}.h5").exists():
             print(f"{h5outpath} already exists.  Skipping...")
             continue
-        if not next(slide_tile_path.glob("*.jpg"), False):
+        if not next(slide_tile_path.glob("*.TIF"), False):  # was .jpg
             print(f"No tiles in {slide_tile_path}.  Skipping...")
             continue
 
