@@ -106,7 +106,7 @@ def _top_att_tiles_df(
             # f_name = tile_dir / slide.stem / f"{slide.stem}_({y},{x}).jpg"
 
             # So use this:
-            f_name = tile_dir / slide.stem / f"tile_({y},{x}).jpg"
+            f_name = tile_dir / slide.stem / f"tile_({y},{x}).tif"
             top_ts.append([i_patient, tile_nr, f_name, att.item(), score.item()])
 
     top_t_results = pd.DataFrame(
@@ -177,7 +177,7 @@ def plot_top_att_tiles_(
     out_file = Path(str(out_file).replace(" ", ""))
     print(f"Writing top tiles csv to: {out_file}")
     df.to_csv(out_file)
-    suffix = [".jpg", ".svg"]
+    suffix = [".tif", ".svg"]
     for s in suffix:
         out_img = out_file.with_suffix(s)
         plot_top_att_from_df_(df, out_img)
@@ -200,7 +200,7 @@ def plot_top_att_tiles_(
         norm_tile = (tile * 255. / tile.max()).astype(np.uint8)
         norm_tile = Image.fromarray(norm_tile, 'RGB')
         out_path = out_dir / 'norm_tiles' / \
-            (out_path.stem + '_norm.jpg')
+            (out_path.stem + '_norm.tif')
         if out_path.parent.exists():
             pass
         else:
