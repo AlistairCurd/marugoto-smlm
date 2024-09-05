@@ -44,13 +44,6 @@ def extract_ctranspath_features_(
         == "7c998680060c8743551a412583fac689db43cec07053b72dfec6dcd810113539"
     )
 
-#    model = ResNet.resnet50(
-#        num_classes=128, mlp=False, two_branch=False, normlinear=True
-#    )
-#    pretext_model = torch.load(checkpoint_path)
-#    model.fc = nn.Identity()
-#    model.load_state_dict(pretext_model, strict=True)
-
     model = swin_tiny_patch4_window7_224(embed_layer=ConvStem, pretrained=False)
     model.head = nn.Identity()
 
