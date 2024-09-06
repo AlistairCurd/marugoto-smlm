@@ -16,6 +16,7 @@ import timm
 import torch
 import torch.nn as nn
 from marugoto.extract.extract import extract_features_
+import uni
 
 # %%
 
@@ -46,15 +47,21 @@ def extract_uni_features_(
     digest = sha256.hexdigest()
 
     # From UNI repo instructions, with downloaded model
-    model = timm.create_model(
-        "vit_large_patch16_224",
-        img_size=224, patch_size=16,
-        init_values=1e-5, num_classes=0, dynamic_img_size=True
+#    model = timm.create_model(
+#        "vit_large_patch16_224",
+#        img_size=224, patch_size=16,
+#        init_values=1e-5, num_classes=0, dynamic_img_size=True
+#        )
+    
+    model, transform = uni.get_encoder(
+        enc_name="uni", device='cpu', assets_dir='/mnt/c/Renal-SMLM/uni-model'
         )
     
-    uni = torch.load(checkpoint_path, map_location='cpu')
-
-    model.load_state_dict(uni, strict=True)
+#    uni = torch.load(checkpoint_path,
+#                     map_location='cpu',
+#                     weights_only=True
+#                     )
+# model.load_state_dict(uni, strict=True)
 
     # And UNI repo instructions say create a transform for normalisation
     # after this (but we do this later anyway)
