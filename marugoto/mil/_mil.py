@@ -91,7 +91,7 @@ def train(
 
     cbs = [
         SaveModelCallback(fname=f"best_valid"),
-        EarlyStoppingCallback(min_delta=0.00001, patience=30),
+        EarlyStoppingCallback(min_delta=0.00001, patience=8),
         CSVLogger(),
     ]
 
