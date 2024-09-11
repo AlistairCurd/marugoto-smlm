@@ -63,7 +63,7 @@ def extract_uni_features_(
 #                     )
 # model.load_state_dict(uni, strict=True)
 
-    # And UNI repo instructions say create a transform for normalisation
+    # And UNI repo instructions say create a transform for colour normalisation
     # after this (but we do this later anyway)
 
     # Try this, as for ctranspath
