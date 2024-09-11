@@ -32,7 +32,7 @@ def add_deploy_args(parser: ArgumentParser) -> ArgumentParser:
     )
 
     parser.add_argument(
-        "--model",
+        "--model-path",
         metavar="PATH",
         type=Path,
         required=True,
@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
     target_label = args.target_label or learn.target_label
 
-    test_df = get_cohort_df(
+    test_df, categories = get_cohort_df(
         clini_table=args.clini_table,
         slide_table=args.slide_table,
         feature_dir=args.feature_dir,
