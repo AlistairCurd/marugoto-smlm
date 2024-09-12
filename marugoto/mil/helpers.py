@@ -467,7 +467,8 @@ def loo_(
 
     df, _ = get_cohort_df(clini_table, slide_csv, feature_dir, target_label, categories)
 
-    num_datapoints = df[target_label].unique
+    num_datapoints = df["PATIENT"].nunique()
+    print('\n{} datapoints.\n'.format(num_datapoints))
     info["n_splits"] = num_datapoints
 
     info["class distribution"] = {
@@ -476,8 +477,8 @@ def loo_(
 
     target_enc = OneHotEncoder(sparse_output=False).fit(categories.reshape(-1, 1))
 
-    # if (fold_path := output_path / "folds.pt").exists():
-    #    folds = torch.load(fold_path)
+    if (fold_path := output_path / "folds.pt").exists():
+        folds = torch.load(fold_path)
 
     # elif fixed_folds is not None:
     #     folds = torch.load(fixed_folds)
@@ -516,7 +517,13 @@ def loo_(
 
     preds_csv = output_path / "patient-preds.csv"
 
+    patient_preds_df = pd.DataFrame(columns=["PATIENT", "pred", "loss"])
+
     for fold, (train_idxs, test_idxs) in enumerate(folds):
+
+        print('\nTest datapoint {} of {}.'.format(
+            fold, num_datapoints))
+
         fold_path = output_path / f"fold-{fold}"
         # if (preds_csv := fold_path / "patient-preds.csv").exists():
         if preds_csv.exists():
@@ -542,14 +549,21 @@ def loo_(
         fold_test_df.drop(columns="slide_path").to_csv(
             fold_path / "test.csv", index=False
         )
-        patient_preds_df = deploy(
+
+        # Take out ROC metric in Learner object since only one class
+        learn.metrics = []
+
+        patient_pred = deploy(
             test_df=fold_test_df,
             learn=learn,
             target_label=target_label,
             cat_labels=cat_labels,
             cont_labels=cont_labels,
         )
-        patient_preds_df.to_csv(preds_csv, index=False)
+
+        patient_preds_df = pd.concat([patient_preds_df, patient_pred])
+
+    patient_preds_df.to_csv(preds_csv, index=False)
 
 
 def _crossval_train(
