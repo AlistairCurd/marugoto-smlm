@@ -312,8 +312,9 @@ def categorical_crossval_(
         else pd.read_excel(clini_table, dtype=str)
     )
     slide_df = pd.read_csv(slide_csv, dtype=str)
+    # breakpoint()
     df = clini_df.merge(slide_df, on="PATIENT")
-
+    # breakpoint()
     # filter na, infer categories if not given
     df = df.dropna(subset=target_label)
 
@@ -323,7 +324,7 @@ def categorical_crossval_(
     info["categories"] = list(categories)
 
     df, _ = get_cohort_df(clini_table, slide_csv, feature_dir, target_label, categories)
-
+    # breakpoint()
     info["class distribution"] = {
         "overall": {k: int(v) for k, v in df[target_label].value_counts().items()}
     }
@@ -350,11 +351,12 @@ def categorical_crossval_(
             )
             n_splits = distrib[least_populated_class]
             info["n_splits"] = distrib[least_populated_class]
-
+        # breakpoint()
         # added shuffling with seed 1337
         skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=1337)
         patient_df = df.groupby("PATIENT").first().reset_index()
         folds = tuple(skf.split(patient_df.PATIENT, patient_df[target_label]))
+        # breakpoint()
         torch.save(folds, fold_path)
 
     info["folds"] = [
@@ -377,6 +379,7 @@ def categorical_crossval_(
             learn = load_learner(fold_path / "export.pkl")
         else:
             fold_train_df = df.iloc[train_idxs]
+            # breakpoint()
             learn = _crossval_train(
                 fold_path=fold_path,
                 fold_df=fold_train_df,
@@ -532,10 +535,10 @@ def loo_(
         elif (fold_path / "export.pkl").exists():
             learn = load_learner(fold_path / "export.pkl")
         else:
-            fold_train_df = df.iloc[train_idxs]
+            fold_train_df = df.iloc[train_idxs]  # **************
             learn = _crossval_train(
                 fold_path=fold_path,
-                fold_df=fold_train_df,
+                fold_df=fold_train_df,  # *****************
                 fold=fold,
                 info=info,
                 target_label=target_label,
@@ -602,6 +605,7 @@ def _crossval_train(
             (_make_cont_enc(train_df, cont_labels), fold_df[cont_labels].values)
         )
 
+    # breakpoint()
     learn = train(
         bags=fold_df.slide_path.values,
         targets=(target_enc, fold_df[target_label].values),

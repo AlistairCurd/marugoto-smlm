@@ -44,6 +44,7 @@ class BagDataset(Dataset):
             with h5py.File(bag_file, "r") as f:
                 feat_list.append(torch.from_numpy(f["feats"][:]))
         feats = torch.concat(feat_list).float()
+        # breakpoint()
 
         # sample a subset, if required
         if self.bag_size:
