@@ -290,6 +290,8 @@ def categorical_crossval_(
             clini table if none given (e.g. '["MSIH", "nonMSIH"]').
         test_groups: Column in the clinical table to use as non-overlapping
             groups for training and testing.
+        valid_groups: Column in the clinical table to use as non-overlapping
+            groups for training and validation.
     """
     feature_dir = Path(feature_dir)
     output_path = Path(output_path)
@@ -402,6 +404,7 @@ def categorical_crossval_(
                 target_enc=target_enc,
                 cat_labels=cat_labels,
                 cont_labels=cont_labels,
+                valid_groups=valid_groups,
             )
             learn.export()
 
@@ -588,7 +591,8 @@ def loo_(
 
 
 def _crossval_train(
-    *, fold_path, fold_df, fold, info, target_label, target_enc, cat_labels, cont_labels
+    *, fold_path, fold_df, fold, info, target_label, target_enc,
+    cat_labels, cont_labels, valid_groups
 ):
     """Helper function for training the folds."""
     assert fold_df.PATIENT.nunique() == len(fold_df)
@@ -598,9 +602,23 @@ def _crossval_train(
         "overall": {k: int(v) for k, v in fold_df[target_label].value_counts().items()}
     }
 
-    train_patients, valid_patients = train_test_split(
-        fold_df.PATIENT, stratify=fold_df[target_label], random_state=1337
-    )
+    if valid_groups is None:
+        train_patients, valid_patients = train_test_split(
+            fold_df.PATIENT, stratify=fold_df[target_label], random_state=1337
+        )
+    else:  # If using non-overlapping groups for validation,
+           # use grouped 4-fold and take first fold
+           # for 75-25 split over groups
+        skgf = StratifiedGroupKFold(n_splits=4, shuffle=True, random_state=1337)
+        valid_groups = fold_df[valid_groups]
+        folds = tuple(skgf.split(fold_df.PATIENT,
+                                 fold_df[target_label],
+                                 valid_groups
+                                 )
+                      )
+        train_patients = fold_df.PATIENT.iloc[folds[0][0]]
+        valid_patients = fold_df.PATIENT.iloc[folds[0][1]]
+
     train_df = fold_df[fold_df.PATIENT.isin(train_patients)]
     valid_df = fold_df[fold_df.PATIENT.isin(valid_patients)]
     train_df.drop(columns="slide_path").to_csv(fold_path / "train.csv", index=False)
