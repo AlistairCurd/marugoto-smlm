@@ -273,6 +273,8 @@ def categorical_crossval_(
     # added option to use fixed folds from previous experiment
     fixed_folds: Optional[Path] = None,
     categories: Optional[Iterable[str]] = None,
+    test_groups: str = None,
+    valid_groups: str = None
 ) -> None:
     """Performs a cross-validation for a categorical target.
 
@@ -286,6 +288,8 @@ def categorical_crossval_(
         fixed_folds: Path to the folds.pt splits you want to use
         categories:  Categories to train for, or all categories appearing in the
             clini table if none given (e.g. '["MSIH", "nonMSIH"]').
+        test_groups: Column in the clinical table to use as non-overlapping
+            groups for training and testing.
     """
     feature_dir = Path(feature_dir)
     output_path = Path(output_path)
@@ -354,10 +358,14 @@ def categorical_crossval_(
         # added shuffling with seed 1337
         skgf = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=1337)
         patient_df = df.groupby("PATIENT").first().reset_index()
-        groups = patient_df.CASE
+
+
+        if test_groups is not None:
+            test_groups = patient_df[test_groups]
+
         folds = tuple(skgf.split(patient_df.PATIENT,
                                  patient_df[target_label],
-                                 groups
+                                 test_groups
                                  )
                       )
         # breakpoint()
