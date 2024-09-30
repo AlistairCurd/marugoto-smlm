@@ -8,7 +8,7 @@ import numpy as np
 import numpy.typing as npt
 import pandas as pd
 from sklearn.impute import SimpleImputer
-from sklearn.model_selection import StratifiedKFold, train_test_split, KFold
+from sklearn.model_selection import StratifiedGroupKFold, train_test_split, KFold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from fastai.vision.learner import load_learner
@@ -351,11 +351,15 @@ def categorical_crossval_(
             )
             n_splits = distrib[least_populated_class]
             info["n_splits"] = distrib[least_populated_class]
-        # breakpoint()
         # added shuffling with seed 1337
-        skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=1337)
+        skgf = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=1337)
         patient_df = df.groupby("PATIENT").first().reset_index()
-        folds = tuple(skf.split(patient_df.PATIENT, patient_df[target_label]))
+        groups = patient_df.CASE
+        folds = tuple(skgf.split(patient_df.PATIENT,
+                                 patient_df[target_label],
+                                 groups
+                                 )
+                      )
         # breakpoint()
         torch.save(folds, fold_path)
 
@@ -371,6 +375,7 @@ def categorical_crossval_(
         json.dump(info, f)
 
     for fold, (train_idxs, test_idxs) in enumerate(folds):
+        print('\nFold {} of {}.'.format(fold + 1, len(folds)))
         fold_path = output_path / f"fold-{fold}"
         if (preds_csv := fold_path / "patient-preds.csv").exists():
             print(f"{preds_csv} already exists!  Skipping...")
@@ -396,6 +401,11 @@ def categorical_crossval_(
         fold_test_df.drop(columns="slide_path").to_csv(
             fold_path / "test.csv", index=False
         )
+
+        # Take out ROC metric in Learner object before deployment
+        # in case there is only one class
+        learn.metrics = []
+
         patient_preds_df = deploy(
             test_df=fold_test_df,
             learn=learn,
