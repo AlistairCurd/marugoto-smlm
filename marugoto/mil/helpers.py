@@ -8,7 +8,8 @@ import numpy as np
 import numpy.typing as npt
 import pandas as pd
 from sklearn.impute import SimpleImputer
-from sklearn.model_selection import StratifiedGroupKFold, train_test_split, KFold
+from sklearn.model_selection import StratifiedKFold, StratifiedGroupKFold
+from sklearn.model_selection import train_test_split, KFold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from fastai.vision.learner import load_learner
@@ -358,17 +359,20 @@ def categorical_crossval_(
             n_splits = distrib[least_populated_class]
             info["n_splits"] = distrib[least_populated_class]
         # added shuffling with seed 1337
-        skgf = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=1337)
+        
         patient_df = df.groupby("PATIENT").first().reset_index()
 
+        if test_groups is None:
+            skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=1337)
 
-        if test_groups is not None:
+        else:
+            skf = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=1337)
             test_groups = patient_df[test_groups]
-
-        folds = tuple(skgf.split(patient_df.PATIENT,
-                                 patient_df[target_label],
-                                 test_groups
-                                 )
+        
+        folds = tuple(skf.split(patient_df.PATIENT,
+                                patient_df[target_label],
+                                test_groups
+                                )
                       )
         # breakpoint()
         torch.save(folds, fold_path)
