@@ -8,10 +8,10 @@ An implementation of
     International conference on machine learning. PMLR, 2018.
 """
 
-from ._mil import *
-from . import data
-from . import helpers
-from . import model
+from . import data, helpers, model
+from ._mil import train, deploy
+
+__all__ = ["data", "helpers", "model", "train", "deploy"]
 
 __author__ = "Marko van Treeck"
 __copyright__ = "Copyright 2022, Kather Lab"

@@ -1,12 +1,14 @@
 # %%
 from pathlib import Path
-import pandas as pd
-import numpy as np
+
+import h5py
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import torch
 from fastai.learner import load_learner
-import h5py
 from PIL import Image
+
 from marugoto import mil
 from marugoto.mil.data import get_target_enc
 

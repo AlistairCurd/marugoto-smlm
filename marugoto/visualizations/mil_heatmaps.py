@@ -1,18 +1,19 @@
 # %%
 from enum import Enum, auto
-from typing import Mapping, Optional, Sequence, Tuple
-from fastai.vision.learner import load_learner
-import numpy as np
-from sklearn.preprocessing import OneHotEncoder
-import torch.nn as nn
-from marugoto.mil.data import get_target_enc
-from matplotlib.patches import Patch
-from scipy import interpolate
-import torch
 from pathlib import Path
-import matplotlib.pyplot as plt
-from PIL import Image
+from typing import Optional
+
 import h5py
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
+import torch.nn as nn
+from fastai.vision.learner import load_learner
+from matplotlib.patches import Patch
+from PIL import Image
+from scipy import interpolate
+
+from marugoto.mil.data import get_target_enc
 
 __all__ = ["plot_heatmaps_", "MapType"]
 # list of allowed formats for whole slide images
@@ -187,7 +188,7 @@ def _plot_heatmap_(
             axs[1].imshow(scaled_heatmap)
             axs[1].axis("off")
     else:
-        print(f"No path to WSI given, plotting heatmap without WSI ...\n")
+        print("No path to WSI given, plotting heatmap without WSI ...\n")
         # only plot heatmap
         heatmap = Image.fromarray(heatmap)
         heatmap = heatmap.resize(
@@ -254,7 +255,7 @@ def _visualize_activation_map(
             # Rescale
             rgbmap = rgbmap / max_cvalue * 255.0
             print(f"Rescaled rgbmap as max pixel value is {max_cvalue}")
-            print(f"This could potentially be a problem!")
+            print("This could potentially be a problem!")
 
     # create RGBA map with non-zero activations being the foreground
     mask = activations.any(axis=2)

@@ -1,16 +1,14 @@
 # %%
 # from ast import Return
+from pathlib import Path
 from typing import Tuple
-from PIL import Image
-from matplotlib import pyplot as plt
-from pydantic import NoneBytes
+
+import pandas as pd
 import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
-import torch.nn as nn
-from pathlib import Path
-import pandas as pd
-
+from matplotlib import pyplot as plt
+from PIL import Image
 
 # %%
 __all__ = ["plot_GCAM_from_csv_top_tiles_"]
@@ -40,8 +38,7 @@ def _get_GCAM_map(img, model: Tuple[nn.Module], idx_target_class: int) -> torch.
 
     assert (
         len(model) == 2
-    ), f"model should be a tuple of len 2, \
-        size given {len(model)}. "
+    ), f"model should be a tuple of len 2, size given {len(model)}. "
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     model_to_fmap, model_after_fmap = model

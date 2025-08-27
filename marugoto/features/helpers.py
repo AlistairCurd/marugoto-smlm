@@ -1,16 +1,16 @@
-from datetime import datetime
 import json
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Iterable, Optional, Union
 
 import numpy as np
 import pandas as pd
+import torch
+from fastai.vision.learner import load_learner
 from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.preprocessing import OneHotEncoder
-from fastai.vision.learner import load_learner
-import torch
 
-from ._features import train, deploy
+from ._features import deploy, train
 
 __all__ = [
     "train_categorical_model_",

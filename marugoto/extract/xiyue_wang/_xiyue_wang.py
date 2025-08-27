@@ -9,12 +9,16 @@ use like this:
         --outdir ~/TCGA_features/TCGA-CRC-DX-features/xiyue-wang \
         /mnt/TCGA_BLOCKS/TCGA-CRC-DX-BLOCKS/*
 """
+
 # %%
 import hashlib
 from pathlib import Path
+
 import torch
 import torch.nn as nn
+
 from marugoto.extract.extract import extract_features_
+
 from .RetCLL import ResNet
 
 # %%

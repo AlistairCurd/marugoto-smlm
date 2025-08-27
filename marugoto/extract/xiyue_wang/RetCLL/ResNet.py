@@ -1,9 +1,8 @@
 import torch
 import torch.nn as nn
-from torch.hub import load_state_dict_from_url
 import torch.nn.functional as F
+from torch.hub import load_state_dict_from_url
 from torch.nn import Parameter
-
 
 __all__ = [
     "ResNet",

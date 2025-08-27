@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-import h5py
 from pathlib import Path
-from tqdm import tqdm
+
+import h5py
 from fire import Fire
+from tqdm import tqdm
 
 
 def find_broken_h5s_(feature_dir: str) -> None:

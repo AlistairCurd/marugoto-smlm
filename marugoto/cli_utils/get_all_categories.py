@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import pandas as pd
 import fire
+import pandas as pd
 
 
 def get_categories(clini_excel: str, *columns: str):

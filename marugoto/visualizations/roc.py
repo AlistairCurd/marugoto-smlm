@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
-from collections import namedtuple
-from typing import Iterable, Sequence, Optional, Tuple, Mapping, List
-from pathlib import Path
 import argparse
+from collections import namedtuple
+from pathlib import Path
+from typing import Iterable, List, Mapping, Optional, Sequence, Tuple
+from warnings import warn
+
 import numpy as np
 import scipy.stats as st
 from matplotlib import pyplot as plt
-from sklearn.metrics import roc_curve, roc_auc_score
-from warnings import warn
+from sklearn.metrics import roc_auc_score, roc_curve
 
 all = [
     "plot_roc_curve",
@@ -106,8 +107,10 @@ def plot_roc_curves(
 
     # calculate confidence intervals and print title
     aucs = [x.auc for x in tpas]
-    l, h = st.t.interval(0.95, len(aucs) - 1, loc=np.mean(aucs), scale=st.sem(aucs))
-    conf_range = (h - l) / 2
+    lower, upper = st.t.interval(
+        0.95, len(aucs) - 1, loc=np.mean(aucs), scale=st.sem(aucs)
+    )
+    conf_range = (upper - lower) / 2
     auc_str = f"AUC = ${np.mean(aucs):0.2f} \pm {conf_range:0.2f}$"
 
     if title:
@@ -115,7 +118,7 @@ def plot_roc_curves(
     else:
         ax.set_title(auc_str)
 
-    return l, h
+    return lower, upper
 
 
 def plot_rocs_for_subtypes(

@@ -1,31 +1,27 @@
-from dataclasses import dataclass
-from typing import Any, Iterable, Optional, Sequence, Tuple, TypeVar
-from pathlib import Path
 import os
+from pathlib import Path
+from typing import Iterable, Optional, Sequence, Tuple, TypeVar
 
-from fastai.vision.all import (
-    Learner,
-    DataLoader,
-    DataLoaders,
-    RocAuc,
-    EarlyStoppingCallback,
-    SaveModelCallback,
-    CSVLogger,
-)
-import h5py
-import torch
-from torch import nn
-import torch.nn.functional as F
-from torch.utils.data import Dataset
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
+import torch
+import torch.nn.functional as F
+from fastai.vision.all import (
+    CSVLogger,
+    DataLoader,
+    DataLoaders,
+    EarlyStoppingCallback,
+    Learner,
+    RocAuc,
+    SaveModelCallback,
+)
+from torch import nn
 
 from marugoto.data import SKLearnEncoder
 
 from .data import make_dataset
 from .model import MILModel
-
 
 __all__ = ["train", "deploy"]
 
@@ -93,7 +89,7 @@ def train(
     learn = Learner(dls, model, loss_func=loss_func, metrics=[RocAuc()], path=path)
 
     cbs = [
-        SaveModelCallback(fname=f"best_valid"),
+        SaveModelCallback(fname="best_valid"),
         EarlyStoppingCallback(patience=16),
         CSVLogger(),
     ]

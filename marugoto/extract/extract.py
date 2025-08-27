@@ -1,19 +1,19 @@
 # %%
+import json
 import os
 import re
-import json
-from typing import Optional, Sequence
-import torch
-from torch.utils.data import Dataset, ConcatDataset
 from pathlib import Path
-import PIL
-from torchvision import transforms
-import numpy as np
-from tqdm import tqdm
+from typing import Optional, Sequence
+
 import h5py
+import numpy as np
+import PIL
+import torch
+from torch.utils.data import ConcatDataset, Dataset
+from torchvision import transforms
+from tqdm import tqdm
 
 from . import __version__
-
 
 __all__ = ["extract_features_"]
 

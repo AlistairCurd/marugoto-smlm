@@ -1,14 +1,13 @@
 """Helper classes to manage pytorch data."""
 
 import itertools
-from typing import Any, Callable, Sequence, Protocol, Union
 import warnings
+from typing import Any, Callable, Protocol, Sequence, Union
 
-from torch.utils.data import Dataset
 import numpy as np
 import numpy.typing as npt
 import torch
-
+from torch.utils.data import Dataset
 
 __author__ = "Marko van Treeck"
 __copyright__ = "Copyright 2022, Kather Lab"

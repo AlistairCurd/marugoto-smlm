@@ -1,31 +1,31 @@
 #!/usr/bin/env python3
 """Train a network on MIL h5 bag features."""
-from dataclasses import dataclass
+
 import os
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Sequence, Optional, TypeVar, Union
+from typing import Any, Optional, Sequence, TypeVar, Union
 from warnings import warn
 
 import h5py
 import numpy as np
 import pandas as pd
 import torch
-from torch import nn
-from torch.utils.data import Dataset, ConcatDataset
 import torch.nn.functional as F
 from fastai.vision.all import (
-    create_head,
-    Learner,
-    RocAuc,
-    SaveModelCallback,
-    EarlyStoppingCallback,
     CSVLogger,
     DataLoader,
     DataLoaders,
+    EarlyStoppingCallback,
+    Learner,
+    RocAuc,
+    SaveModelCallback,
+    create_head,
 )
+from torch import nn
+from torch.utils.data import ConcatDataset, Dataset
 
-from marugoto.data import ZipDataset, EncodedDataset
-
+from marugoto.data import EncodedDataset, ZipDataset
 
 __all__ = ["make_dataset", "H5TileDataset", "train", "deploy"]
 
@@ -198,7 +198,7 @@ def train(
     learn = Learner(dls, model, loss_func=loss_func, metrics=[RocAuc()], path=path)
 
     cbs = [
-        SaveModelCallback(monitor="roc_auc_score", fname=f"best_valid"),
+        SaveModelCallback(monitor="roc_auc_score", fname="best_valid"),
         EarlyStoppingCallback(
             monitor="roc_auc_score", min_delta=0.01, patience=patience
         ),

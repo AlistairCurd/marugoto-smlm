@@ -2,10 +2,10 @@
 """Calculate statistics for deployments on categorical targets."""
 
 from pathlib import Path
-import pandas as pd
-from sklearn import metrics
-import scipy.stats as st
 
+import pandas as pd
+import scipy.stats as st
+from sklearn import metrics
 
 __author__ = "Marko van Treeck"
 __copyright__ = "Copyright 2022, Kather Lab"
@@ -68,11 +68,11 @@ def aggregate_categorical_stats(df) -> pd.DataFrame:
     for cat, data in df.groupby("level_1"):
         scores_df = data[score_labels]
         means, sems = scores_df.mean(), scores_df.sem()
-        l, h = st.t.interval(
+        lower, upper = st.t.interval(
             confidence=0.95, df=len(scores_df) - 1, loc=means, scale=sems
         )
         cat_stats_df = (
-            pd.DataFrame.from_dict({"mean": means, "95% conf": (h - l) / 2})
+            pd.DataFrame.from_dict({"mean": means, "95% conf": (upper - lower) / 2})
             .transpose()
             .unstack()
         )
@@ -108,6 +108,7 @@ def categorical_aggregated_(*preds_csvs: str, outpath: str, target_label: str) -
 
 if __name__ == "__main__":
     from warnings import warn
+
     from fire import Fire
 
     warn(

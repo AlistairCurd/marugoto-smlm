@@ -1,5 +1,6 @@
-from ._features import *
+from ._features import make_dataset, H5TileDataset, train, deploy
 
+__all__ = ["make_dataset", "H5TileDataset", "train", "deploy"]
 
 __author__ = "Marko van Treeck"
 __copyright__ = "Copyright 2022, Kather Lab"

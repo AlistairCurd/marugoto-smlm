@@ -1,12 +1,11 @@
 # %%
 from collections import namedtuple
-from typing import Iterable, Sequence, Optional, Tuple
+from typing import Iterable, Optional, Sequence, Tuple
 
 import numpy as np
 import scipy.stats as st
 from matplotlib import pyplot as plt
-from sklearn.metrics import precision_recall_curve, average_precision_score
-
+from sklearn.metrics import average_precision_score, precision_recall_curve
 
 all = [
     "plot_precision_recall_curve",
@@ -95,8 +94,10 @@ def plot_precision_recall_curves(
 
     # calculate confidence intervals and print title
     aucs = [x.auc for x in tpas]
-    l, h = st.t.interval(0.95, len(aucs) - 1, loc=np.mean(aucs), scale=st.sem(aucs))
-    conf_range = (h - l) / 2
+    lower, upper = st.t.interval(
+        0.95, len(aucs) - 1, loc=np.mean(aucs), scale=st.sem(aucs)
+    )
+    conf_range = (upper - lower) / 2
     auc_str = f"AUC = ${np.mean(aucs):0.2f} \pm {conf_range:0.2f}$"
 
     if title:
@@ -104,7 +105,7 @@ def plot_precision_recall_curves(
     else:
         ax.set_title(auc_str)
 
-    return l, h
+    return lower, upper
 
 
 def plot_precision_recall_curves_(
@@ -118,8 +119,9 @@ def plot_precision_recall_curves_(
         true_label:  The positive class for the precision-recall.
         outpath:  Path to save the `.svg` to.
     """
-    import pandas as pd
     from pathlib import Path
+
+    import pandas as pd
 
     outpath = Path(outpath)
     outpath.mkdir(parents=True, exist_ok=True)

@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 
+import json
 from argparse import ArgumentParser
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
-import json
 
 import pandas as pd
+import torch
+import torch.nn.functional as F
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
-import torch
 from torch import nn
-import torch.nn.functional as F
 
 from marugoto.mil._mil import train
 from marugoto.mil.data import get_cohort_df
