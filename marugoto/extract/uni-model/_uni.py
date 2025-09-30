@@ -16,7 +16,6 @@ import timm
 import torch
 import torch.nn as nn
 from marugoto.extract.extract import extract_features_
-# import uni
 
 # %%
 
@@ -45,10 +44,6 @@ def extract_uni_features_(
             sha256.update(data)
 
     digest = sha256.hexdigest()
-
-#    model, transform = uni.get_encoder(
-#        enc_name="uni", device='cpu', assets_dir='/mnt/c/Renal-SMLM/uni-model'
-#        )
 
     # From UNI repo instructions, with downloaded model
     model = timm.create_model(
