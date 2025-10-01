@@ -22,6 +22,13 @@ from marugoto.data import SKLearnEncoder
 from ._mil import deploy, train
 from .data import get_cohort_df, get_target_enc
 
+# Allow unpickling of models
+torch.serialization.add_safe_globals([np._core.multiarray._reconstruct])
+torch.serialization.add_safe_globals([np.ndarray])
+torch.serialization.add_safe_globals([np.dtype])
+torch.serialization.add_safe_globals([np.dtypes.Int64DType])
+
+
 __all__ = [
     "train_categorical_model_",
     "deploy_categorical_model_",
@@ -570,6 +577,7 @@ def loo_(
                 target_enc=target_enc,
                 cat_labels=cat_labels,
                 cont_labels=cont_labels,
+                valid_groups=None
             )
             learn.export()
 
