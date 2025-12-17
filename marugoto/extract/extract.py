@@ -128,7 +128,7 @@ def extract_features_(
         ds = ConcatDataset([unaugmented_ds, augmented_ds])
         dl = torch.utils.data.DataLoader(
             ds,
-            batch_size=64,
+            batch_size=1,
             shuffle=False,
             num_workers=os.cpu_count(),
             drop_last=False,
